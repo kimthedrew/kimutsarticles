@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     }
 
     await connectDB();
-    const user = await User.findById(payload.userId);
+    const user = await User.findById((payload as any).userId);
 
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });

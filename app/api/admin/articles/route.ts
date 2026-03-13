@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     const payload = verifyToken(token);
-    if (!payload) {
+    if (!payload || typeof payload === 'string') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     
     const article = await Article.create({
       ...data,
-      author: payload.userId,
+      author: (payload as any).userId,
       publishedAt: data.status === 'published' ? new Date() : null,
     });
 
