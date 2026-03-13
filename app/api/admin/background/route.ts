@@ -5,6 +5,10 @@ import BackgroundImage from '@/models/BackgroundImage';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
+// Disable caching for this route
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET() {
   try {
     await connectDB();
