@@ -23,6 +23,7 @@ export default function EditorPage() {
   });
   const [saving, setSaving] = useState(false);
   const [quillInstance, setQuillInstance] = useState<any>(null);
+  const [importing, setImporting] = useState(false);
 
   // Image upload handler
   const imageHandler = () => {
@@ -98,6 +99,54 @@ export default function EditorPage() {
     'align',
     'link', 'image'
   ];
+
+  // Import article from file
+  const handleImportFile = () => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', '.txt,.html,.htm,.md,.markdown,.docx');
+    input.click();
+
+    input.onchange = async () => {
+      const file = input.files?.[0];
+      if (!file) return;
+
+      setImporting(true);
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const token = localStorage.getItem('token');
+
+      try {
+        const res = await fetch('/api/admin/import-article', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          setArticle({
+            ...article,
+            title: data.title,
+            content: data.content,
+          });
+          alert('Article imported successfully! You can now edit and add details.');
+        } else {
+          const error = await res.json();
+          alert(error.error || 'Failed to import article');
+        }
+      } catch (error) {
+        console.error('Import error:', error);
+        alert('Failed to import article');
+      } finally {
+        setImporting(false);
+      }
+    };
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -206,6 +255,23 @@ export default function EditorPage() {
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-white rounded-lg shadow-md p-8">
+          {/* Import Button */}
+          <div className="mb-6 pb-6 border-b border-gray-200">
+            <button
+              onClick={handleImportFile}
+              disabled={importing}
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 transition"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+              {importing ? 'Importing...' : 'Import from File'}
+            </button>
+            <p className="text-sm text-gray-500 mt-2">
+              Import an existing article from .txt, .html, .md, or .docx file
+            </p>
+          </div>
+
           <div className="mb-6">
             <label className="block text-gray-700 mb-2 font-semibold">Title</label>
             <input
