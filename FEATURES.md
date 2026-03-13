@@ -2,7 +2,26 @@
 
 ## Recent Updates
 
-### 1. Password Visibility Toggle
+### 1. Admin Settings & Password Management
+- New settings page at `/admin/settings` with two tabs:
+  - Homepage Content: Edit hero tag, title, and subtitle dynamically
+  - Change Password: Secure password change with current password verification
+- Logout now redirects to homepage instead of login page
+- Password requirements: minimum 6 characters
+- Real-time validation and error handling
+
+### 2. Custom Background Images
+- New admin page at `/admin/background` for managing homepage backgrounds
+- Upload custom background images (max 5MB)
+- Multiple images can be uploaded and stored
+- Activate/deactivate images with one click
+- Only one image can be active at a time
+- Background shows through transparent gradient overlays
+- Maintains the warm amber/orange color scheme with 75-80% opacity
+- Applies to homepage, articles list, and individual article pages
+- Recommended image size: 1920x1080 or larger for best quality
+
+### 2. Password Visibility Toggle
 - Added eye icon to password field on login page
 - Click to toggle between showing/hiding password
 - Improved user experience with visual feedback
@@ -38,6 +57,10 @@
 ### Admin Features
 ✅ Secure login with JWT authentication
 ✅ Password visibility toggle
+✅ Change password functionality
+✅ Editable homepage content (hero section)
+✅ Custom background image management
+✅ Upload and manage multiple background images
 ✅ Rich text editor (React Quill)
 ✅ Auto-save drafts every 30 seconds
 ✅ Draft management (create, edit, delete)
@@ -79,6 +102,8 @@
 - Dashboard: `/admin/dashboard`
 - Article Editor: `/admin/editor`
 - Engagement Management: `/admin/engagement`
+- Background Manager: `/admin/background`
+- Settings: `/admin/settings` (Homepage content & password change)
 
 ## API Endpoints
 
@@ -89,9 +114,13 @@
 - `DELETE /api/articles/[id]/likes` - Unlike article
 - `GET /api/articles/[id]/comments` - Get approved comments
 - `POST /api/articles/[id]/comments` - Submit comment
+- `GET /api/background/active` - Get active background image
 
 ### Admin (requires JWT token)
 - `POST /api/auth/login` - Admin login
+- `POST /api/admin/change-password` - Change admin password
+- `GET /api/admin/settings` - Get site settings
+- `PATCH /api/admin/settings` - Update site settings
 - `GET /api/admin/articles` - List all articles
 - `POST /api/admin/articles` - Create article
 - `PUT /api/admin/articles/[id]` - Update article
@@ -100,6 +129,10 @@
 - `GET /api/admin/comments` - List all comments
 - `PATCH /api/admin/comments/[id]` - Update comment status
 - `DELETE /api/admin/comments/[id]` - Delete comment
+- `GET /api/admin/background` - List all background images
+- `POST /api/admin/background` - Upload background image
+- `PATCH /api/admin/background/[id]` - Toggle image active status
+- `DELETE /api/admin/background/[id]` - Delete background image
 
 ## Database Models
 
@@ -126,3 +159,16 @@
 - email, password (hashed)
 - role (admin)
 - timestamp
+
+### BackgroundImage
+- url (base64 data URL)
+- filename
+- fileSize
+- isActive (boolean)
+- uploadedAt
+
+### SiteSettings
+- heroTitle (homepage main title)
+- heroSubtitle (homepage description)
+- heroTag (homepage badge text)
+- updatedAt

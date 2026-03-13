@@ -7,9 +7,18 @@ import { format } from 'date-fns';
 export default function ArticlesPage() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
 
   useEffect(() => {
     fetchArticles();
+    fetch('/api/background/active')
+      .then(res => res.json())
+      .then(data => {
+        if (data?.url) {
+          setBackgroundImage(data.url);
+        }
+      })
+      .catch(err => console.error('Failed to fetch background:', err));
   }, []);
 
   const fetchArticles = async () => {
@@ -26,7 +35,20 @@ export default function ArticlesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
+    <div className="min-h-screen relative">
+      {/* Background Image Layer */}
+      {backgroundImage && (
+        <div 
+          className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${backgroundImage})` }}
+        />
+      )}
+      
+      {/* Gradient Overlay */}
+      <div className="fixed inset-0 z-0 bg-gradient-to-br from-amber-50/80 via-orange-50/75 to-yellow-50/80" />
+      
+      {/* Content Layer */}
+      <div className="relative z-10">
       <nav className="bg-white/90 backdrop-blur-sm shadow-sm border-b border-amber-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex justify-between items-center">
@@ -122,6 +144,7 @@ export default function ArticlesPage() {
           </div>
         </div>
       </footer>
+      </div>
     </div>
   );
 }

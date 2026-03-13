@@ -1,8 +1,61 @@
+'use client';
+
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+
+interface SiteSettings {
+  heroTitle: string;
+  heroSubtitle: string;
+  heroTag: string;
+}
 
 export default function Home() {
+  const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
+  const [settings, setSettings] = useState<SiteSettings>({
+    heroTitle: 'Real Estate Insights',
+    heroSubtitle: 'Educational insights for aspiring real estate investors. Stay informed with expert analysis, market trends, and proven investment strategies.',
+    heroTag: 'Key Insights',
+  });
+
+  useEffect(() => {
+    fetch('/api/background/active')
+      .then(res => res.json())
+      .then(data => {
+        if (data?.url) {
+          setBackgroundImage(data.url);
+        }
+      })
+      .catch(err => console.error('Failed to fetch background:', err));
+
+    fetch('/api/admin/settings')
+      .then(res => res.json())
+      .then(data => {
+        if (data) {
+          setSettings({
+            heroTitle: data.heroTitle || 'Real Estate Insights',
+            heroSubtitle: data.heroSubtitle || 'Educational insights for aspiring real estate investors. Stay informed with expert analysis, market trends, and proven investment strategies.',
+            heroTag: data.heroTag || 'Key Insights',
+          });
+        }
+      })
+      .catch(err => console.error('Failed to fetch settings:', err));
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
+    <div className="min-h-screen relative">
+      {/* Background Image Layer */}
+      {backgroundImage && (
+        <div 
+          className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${backgroundImage})` }}
+        />
+      )}
+      
+      {/* Gradient Overlay - more transparent to show background */}
+      <div className="fixed inset-0 z-0 bg-gradient-to-br from-amber-50/80 via-orange-50/75 to-yellow-50/80" />
+      
+      {/* Content Layer */}
+      <div className="relative z-10">
       <nav className="bg-white/90 backdrop-blur-sm shadow-sm sticky top-0 z-10 border-b border-amber-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex justify-between items-center">
@@ -33,14 +86,13 @@ export default function Home() {
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
               <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
             </svg>
-            <span className="text-sm font-medium uppercase tracking-wider">Key Insights</span>
+            <span className="text-sm font-medium uppercase tracking-wider">{settings.heroTag}</span>
           </div>
           <h2 className="text-5xl md:text-6xl font-bold mb-6 text-slate-700 tracking-tight">
-            Real Estate Insights
+            {settings.heroTitle}
           </h2>
           <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-            Educational insights for aspiring real estate investors. Stay informed with expert analysis, 
-            market trends, and proven investment strategies.
+            {settings.heroSubtitle}
           </p>
         </div>
 
@@ -100,6 +152,7 @@ export default function Home() {
           </div>
         </div>
       </footer>
+      </div>
     </div>
   );
 }

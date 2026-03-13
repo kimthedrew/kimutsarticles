@@ -52,7 +52,7 @@ export default function AdminDashboard() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    router.push('/admin/login');
+    router.push('/');
   };
 
 
@@ -62,6 +62,12 @@ export default function AdminDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-blue-600">Admin Dashboard</h1>
           <div className="flex gap-4">
+            <Link href="/admin/settings" className="bg-slate-600 text-white px-4 py-2 rounded hover:bg-slate-700">
+              Settings
+            </Link>
+            <Link href="/admin/background" className="bg-amber-600 text-white px-4 py-2 rounded hover:bg-amber-700">
+              Background
+            </Link>
             <Link href="/admin/engagement" className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
               Manage Engagement
             </Link>

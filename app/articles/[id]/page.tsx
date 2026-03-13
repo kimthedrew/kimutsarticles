@@ -13,6 +13,7 @@ export default function ArticlePage() {
   const [hasLiked, setHasLiked] = useState(false);
   const [loading, setLoading] = useState(true);
   const [commentForm, setCommentForm] = useState({ author: '', email: '', content: '' });
+  const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (params.id) {
@@ -20,6 +21,14 @@ export default function ArticlePage() {
       fetchComments();
       fetchLikes();
     }
+    fetch('/api/background/active')
+      .then(res => res.json())
+      .then(data => {
+        if (data?.url) {
+          setBackgroundImage(data.url);
+        }
+      })
+      .catch(err => console.error('Failed to fetch background:', err));
   }, [params.id]);
 
   const fetchArticle = async () => {
@@ -89,8 +98,21 @@ export default function ArticlePage() {
   if (!article) return <div className="min-h-screen flex items-center justify-center">Article not found</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm">
+    <div className="min-h-screen relative">
+      {/* Background Image Layer */}
+      {backgroundImage && (
+        <div 
+          className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${backgroundImage})` }}
+        />
+      )}
+      
+      {/* Gradient Overlay */}
+      <div className="fixed inset-0 z-0 bg-gradient-to-br from-gray-50/90 via-white/85 to-gray-50/90" />
+      
+      {/* Content Layer */}
+      <div className="relative z-10">
+      <nav className="bg-white/90 backdrop-blur-sm shadow-sm">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <Link href="/articles" className="text-blue-600 hover:text-blue-800">
             ← Back to Articles
@@ -179,6 +201,7 @@ export default function ArticlePage() {
           </div>
         )}
       </main>
+      </div>
     </div>
   );
 }
