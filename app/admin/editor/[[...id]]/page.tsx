@@ -118,11 +118,13 @@ export default function EditorPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-blue-600">Article Editor</h1>
-          <button onClick={() => router.push('/admin/dashboard')} className="text-gray-600 hover:text-gray-900">
-            Back to Dashboard
-          </button>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <h1 className="text-xl sm:text-2xl font-bold text-blue-600">Article Editor</h1>
+            <button onClick={() => router.push('/admin/dashboard')} className="text-gray-600 hover:text-gray-900 text-sm">
+              Back to Dashboard
+            </button>
+          </div>
         </div>
       </nav>
 

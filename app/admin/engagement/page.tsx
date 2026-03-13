@@ -100,11 +100,13 @@ export default function EngagementPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-blue-600">Engagement Management</h1>
-          <Link href="/admin/dashboard" className="text-gray-600 hover:text-gray-900">
-            Back to Dashboard
-          </Link>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <h1 className="text-xl sm:text-2xl font-bold text-blue-600">Engagement Management</h1>
+            <Link href="/admin/dashboard" className="text-gray-600 hover:text-gray-900 text-sm">
+              Back to Dashboard
+            </Link>
+          </div>
         </div>
       </nav>
 
@@ -186,33 +188,33 @@ export default function EngagementPage() {
               {approvedComments.length === 0 ? (
                 <p className="text-gray-500">No approved comments yet</p>
               ) : (
-                <div className="bg-white rounded-lg shadow overflow-hidden">
+                <div className="bg-white rounded-lg shadow overflow-x-auto">
                   <table className="min-w-full">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Author</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Comment</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Author</th>
+                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Comment</th>
+                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">Date</th>
+                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
                       {approvedComments.map((comment: any) => (
                         <tr key={comment._id}>
-                          <td className="px-6 py-4">
+                          <td className="px-4 sm:px-6 py-4">
                             <div>
-                              <p className="font-medium">{comment.author}</p>
-                              <p className="text-sm text-gray-500">{comment.email}</p>
+                              <p className="font-medium text-sm">{comment.author}</p>
+                              <p className="text-xs text-gray-500 truncate max-w-[150px]">{comment.email}</p>
                             </div>
                           </td>
-                          <td className="px-6 py-4 max-w-md truncate">{comment.content}</td>
-                          <td className="px-6 py-4 text-sm text-gray-500">
+                          <td className="px-4 sm:px-6 py-4 max-w-[200px] sm:max-w-md truncate text-sm">{comment.content}</td>
+                          <td className="px-4 sm:px-6 py-4 text-sm text-gray-500 hidden sm:table-cell">
                             {format(new Date(comment.createdAt), 'MMM d, yyyy')}
                           </td>
-                          <td className="px-6 py-4">
+                          <td className="px-4 sm:px-6 py-4">
                             <button
                               onClick={() => handleDeleteComment(comment._id)}
-                              className="text-red-600 hover:underline"
+                              className="text-red-600 hover:underline text-sm"
                             >
                               Delete
                             </button>
@@ -235,7 +237,7 @@ export default function EngagementPage() {
               {articles.map((article: any) => (
                 <div key={article._id} className="bg-white p-6 rounded-lg shadow">
                   <h3 className="font-semibold text-lg mb-4">{article.title}</h3>
-                  <div className="flex gap-8">
+                  <div className="flex flex-col sm:flex-row gap-8">
                     <label className="flex items-center gap-3 cursor-pointer">
                       <input
                         type="checkbox"
@@ -243,7 +245,7 @@ export default function EngagementPage() {
                         onChange={(e) => handleToggleFeature(article._id, 'likesEnabled', e.target.checked)}
                         className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                       />
-                      <span className="text-gray-700">
+                      <span className="text-gray-700 text-sm sm:text-base">
                         Show Likes to Readers
                         <span className="text-sm text-gray-500 ml-2">
                           ({article.likesEnabled ? 'Visible' : 'Hidden'})
@@ -257,7 +259,7 @@ export default function EngagementPage() {
                         onChange={(e) => handleToggleFeature(article._id, 'commentsEnabled', e.target.checked)}
                         className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                       />
-                      <span className="text-gray-700">
+                      <span className="text-gray-700 text-sm sm:text-base">
                         Show Comments to Readers
                         <span className="text-sm text-gray-500 ml-2">
                           ({article.commentsEnabled ? 'Visible' : 'Hidden'})

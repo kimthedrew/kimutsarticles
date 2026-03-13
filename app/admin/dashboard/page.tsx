@@ -59,24 +59,26 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-blue-600">Admin Dashboard</h1>
-          <div className="flex gap-4">
-            <Link href="/admin/settings" className="bg-slate-600 text-white px-4 py-2 rounded hover:bg-slate-700">
-              Settings
-            </Link>
-            <Link href="/admin/background" className="bg-amber-600 text-white px-4 py-2 rounded hover:bg-amber-700">
-              Background
-            </Link>
-            <Link href="/admin/engagement" className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
-              Manage Engagement
-            </Link>
-            <Link href="/admin/editor" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-              New Article
-            </Link>
-            <button onClick={handleLogout} className="text-gray-600 hover:text-gray-900">
-              Logout
-            </button>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <h1 className="text-xl sm:text-2xl font-bold text-blue-600">Admin Dashboard</h1>
+            <div className="flex flex-wrap gap-2 sm:gap-4 w-full sm:w-auto">
+              <Link href="/admin/settings" className="bg-slate-600 text-white px-3 py-2 text-sm rounded hover:bg-slate-700">
+                Settings
+              </Link>
+              <Link href="/admin/background" className="bg-amber-600 text-white px-3 py-2 text-sm rounded hover:bg-amber-700">
+                Background
+              </Link>
+              <Link href="/admin/engagement" className="bg-purple-600 text-white px-3 py-2 text-sm rounded hover:bg-purple-700">
+                Engagement
+              </Link>
+              <Link href="/admin/editor" className="bg-blue-600 text-white px-3 py-2 text-sm rounded hover:bg-blue-700">
+                New Article
+              </Link>
+              <button onClick={handleLogout} className="text-gray-600 hover:text-gray-900 text-sm">
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </nav>
@@ -106,24 +108,24 @@ export default function AdminDashboard() {
 
         <section>
           <h2 className="text-2xl font-bold mb-4">Published Articles ({articles.length})</h2>
-          <div className="bg-white rounded-lg shadow overflow-hidden">
+          <div className="bg-white rounded-lg shadow overflow-x-auto">
             <table className="min-w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Views</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Published</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Views</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">Published</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {articles.map((article: any) => (
                   <tr key={article._id}>
-                    <td className="px-6 py-4">{article.title}</td>
-                    <td className="px-6 py-4">{article.views}</td>
-                    <td className="px-6 py-4">{format(new Date(article.publishedAt), 'MMM d, yyyy')}</td>
-                    <td className="px-6 py-4">
-                      <Link href={`/admin/editor/${article._id}`} className="text-blue-600 hover:underline mr-4">
+                    <td className="px-4 sm:px-6 py-4 text-sm">{article.title}</td>
+                    <td className="px-4 sm:px-6 py-4 text-sm">{article.views}</td>
+                    <td className="px-4 sm:px-6 py-4 text-sm hidden sm:table-cell">{format(new Date(article.publishedAt), 'MMM d, yyyy')}</td>
+                    <td className="px-4 sm:px-6 py-4 text-sm">
+                      <Link href={`/admin/editor/${article._id}`} className="text-blue-600 hover:underline mr-2 sm:mr-4">
                         Edit
                       </Link>
                       <button onClick={() => handleDelete(article._id)} className="text-red-600 hover:underline">
