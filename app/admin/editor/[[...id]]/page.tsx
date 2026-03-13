@@ -165,13 +165,28 @@ export default function EditorPage() {
       fetchArticle();
     }
 
+    // Capture Quill instance after a short delay to ensure it's initialized
+    const timer = setTimeout(() => {
+      const quillContainer = document.querySelector('.ql-editor');
+      if (quillContainer) {
+        // Find the Quill instance from the container
+        const quillInstance = (quillContainer as any).__quill;
+        if (quillInstance) {
+          setQuillInstance(quillInstance);
+        }
+      }
+    }, 100);
+
     const interval = setInterval(() => {
       if (article.title || article.content) {
         autoSave();
       }
     }, 30000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
   }, [articleId]);
 
   const fetchArticle = async () => {
@@ -307,7 +322,7 @@ export default function EditorPage() {
               value={article.content}
               onChange={(content) => setArticle({ ...article, content })}
               onChangeSelection={(selection, source, editor) => {
-                // Capture the Quill instance when selection changes
+                // Also capture when user interacts with editor
                 if (editor && !quillInstance) {
                   setQuillInstance(editor);
                 }
