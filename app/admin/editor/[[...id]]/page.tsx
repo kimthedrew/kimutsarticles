@@ -24,9 +24,10 @@ export default function EditorPage() {
   });
   const [saving, setSaving] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [quillInstance, setQuillInstance] = useState<any>(null);
 
   // Image upload handler
-  const imageHandler = () => {
+  const imageHandler = async () => {
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
     input.setAttribute('accept', 'image/*');
@@ -58,20 +59,15 @@ export default function EditorPage() {
 
         if (res.ok) {
           const data = await res.json();
-          // Get Quill instance from window or ref
-          let quill = (window as any).__quillInstance;
-          
-          if (!quill && quillRef.current) {
-            const editorElement = quillRef.current.querySelector('.ql-editor');
-            quill = (editorElement as any)?.__quill;
-          }
-          
-          if (quill) {
-            const range = quill.getSelection(true) || { index: 0 };
-            quill.insertEmbed(range.index, 'image', data.url);
-            quill.setSelection(range.index + 1);
+          // Use the stored quillInstance
+          if (quillInstance) {
+            const range = quillInstance.getSelection();
+            if (range) {
+              quillInstance.insertEmbed(range.index, 'image', data.url);
+              quillInstance.setSelection(range.index + 1);
+            }
           } else {
-            alert('Editor not ready. Please try again.');
+            alert('Editor not ready. Please click in the editor first and try again.');
           }
         } else {
           alert('Failed to upload image');
@@ -169,28 +165,13 @@ export default function EditorPage() {
       fetchArticle();
     }
 
-    // Capture Quill instance when editor is ready
-    const timer = setTimeout(() => {
-      const editorElement = quillRef.current?.querySelector('.ql-editor');
-      if (editorElement) {
-        // Store reference to Quill instance
-        const quillInstance = (editorElement as any).__quill;
-        if (quillInstance) {
-          (window as any).__quillInstance = quillInstance;
-        }
-      }
-    }, 500);
-
     const interval = setInterval(() => {
       if (article.title || article.content) {
         autoSave();
       }
     }, 30000);
 
-    return () => {
-      clearTimeout(timer);
-      clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, [articleId]);
 
   const fetchArticle = async () => {
@@ -321,16 +302,20 @@ export default function EditorPage() {
 
           <div className="mb-6">
             <label className="block text-gray-700 mb-2 font-semibold">Content</label>
-            <div ref={quillRef}>
-              <ReactQuill
-                theme="snow"
-                value={article.content}
-                onChange={(content) => setArticle({ ...article, content })}
-                modules={modules}
-                formats={formats}
-                className="bg-white"
-              />
-            </div>
+            <ReactQuill
+              theme="snow"
+              value={article.content}
+              onChange={(content) => setArticle({ ...article, content })}
+              onChangeSelection={(selection, source, editor) => {
+                // Capture the Quill instance when selection changes
+                if (editor && !quillInstance) {
+                  setQuillInstance(editor);
+                }
+              }}
+              modules={modules}
+              formats={formats}
+              className="bg-white"
+            />
             <p className="text-sm text-gray-500 mt-2">
               Click the image icon in the toolbar to insert images into your article
             </p>
