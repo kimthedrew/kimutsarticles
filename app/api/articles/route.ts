@@ -7,7 +7,7 @@ export async function GET() {
     await dbConnect();
     const articles = await Article.find({ status: 'published' })
       .sort({ publishedAt: -1 })
-      .select('title excerpt category tags views publishedAt');
+      .select('_id title excerpt category tags views publishedAt');
     
     return NextResponse.json(articles);
   } catch (error) {
