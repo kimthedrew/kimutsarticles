@@ -10,6 +10,12 @@ export default function SettingsPage() {
     heroTitle: '',
     heroSubtitle: '',
     heroTag: '',
+    card1Title: '',
+    card1Description: '',
+    card2Title: '',
+    card2Description: '',
+    card3Title: '',
+    card3Description: '',
   });
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: '',
@@ -40,6 +46,12 @@ export default function SettingsPage() {
           heroTitle: data.heroTitle || '',
           heroSubtitle: data.heroSubtitle || '',
           heroTag: data.heroTag || '',
+          card1Title: data.card1Title || '',
+          card1Description: data.card1Description || '',
+          card2Title: data.card2Title || '',
+          card2Description: data.card2Description || '',
+          card3Title: data.card3Title || '',
+          card3Description: data.card3Description || '',
         });
       }
     } catch (err) {
@@ -228,6 +240,102 @@ export default function SettingsPage() {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Educational insights for aspiring real estate investors..."
                   />
+                </div>
+
+                <div className="border-t border-gray-200 pt-6 mt-6">
+                  <h3 className="text-lg font-semibold text-slate-700 mb-4">Feature Cards</h3>
+                  
+                  <div className="space-y-6">
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <h4 className="font-medium text-slate-700 mb-3">Card 1</h4>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Title
+                          </label>
+                          <input
+                            type="text"
+                            value={settings.card1Title}
+                            onChange={(e) => setSettings({ ...settings, card1Title: e.target.value })}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="Market Trends"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Description
+                          </label>
+                          <textarea
+                            value={settings.card1Description}
+                            onChange={(e) => setSettings({ ...settings, card1Description: e.target.value })}
+                            rows={2}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="Understanding legal due diligence..."
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <h4 className="font-medium text-slate-700 mb-3">Card 2</h4>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Title
+                          </label>
+                          <input
+                            type="text"
+                            value={settings.card2Title}
+                            onChange={(e) => setSettings({ ...settings, card2Title: e.target.value })}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="Buying Guides"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Description
+                          </label>
+                          <textarea
+                            value={settings.card2Description}
+                            onChange={(e) => setSettings({ ...settings, card2Description: e.target.value })}
+                            rows={2}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="Expert advice for first-time buyers..."
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <h4 className="font-medium text-slate-700 mb-3">Card 3</h4>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Title
+                          </label>
+                          <input
+                            type="text"
+                            value={settings.card3Title}
+                            onChange={(e) => setSettings({ ...settings, card3Title: e.target.value })}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="Investment Tips"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Description
+                          </label>
+                          <textarea
+                            value={settings.card3Description}
+                            onChange={(e) => setSettings({ ...settings, card3Description: e.target.value })}
+                            rows={2}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="Ensure all necessary documents..."
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 

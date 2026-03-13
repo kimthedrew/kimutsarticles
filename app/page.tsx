@@ -7,6 +7,12 @@ interface SiteSettings {
   heroTitle: string;
   heroSubtitle: string;
   heroTag: string;
+  card1Title: string;
+  card1Description: string;
+  card2Title: string;
+  card2Description: string;
+  card3Title: string;
+  card3Description: string;
 }
 
 export default function Home() {
@@ -15,6 +21,12 @@ export default function Home() {
     heroTitle: 'Real Estate Insights',
     heroSubtitle: 'Educational insights for aspiring real estate investors. Stay informed with expert analysis, market trends, and proven investment strategies.',
     heroTag: 'Key Insights',
+    card1Title: 'Market Trends',
+    card1Description: 'Understanding legal due diligence is crucial for real estate transactions. Stay updated with the latest market analysis.',
+    card2Title: 'Buying Guides',
+    card2Description: 'Expert advice for first-time buyers and seasoned property investors. Navigate the market with confidence.',
+    card3Title: 'Investment Tips',
+    card3Description: 'Ensure all necessary documents are thoroughly reviewed to mitigate risks and protect your investment.',
   });
 
   useEffect(() => {
@@ -35,6 +47,12 @@ export default function Home() {
             heroTitle: data.heroTitle || 'Real Estate Insights',
             heroSubtitle: data.heroSubtitle || 'Educational insights for aspiring real estate investors. Stay informed with expert analysis, market trends, and proven investment strategies.',
             heroTag: data.heroTag || 'Key Insights',
+            card1Title: data.card1Title || 'Market Trends',
+            card1Description: data.card1Description || 'Understanding legal due diligence is crucial for real estate transactions. Stay updated with the latest market analysis.',
+            card2Title: data.card2Title || 'Buying Guides',
+            card2Description: data.card2Description || 'Expert advice for first-time buyers and seasoned property investors. Navigate the market with confidence.',
+            card3Title: data.card3Title || 'Investment Tips',
+            card3Description: data.card3Description || 'Ensure all necessary documents are thoroughly reviewed to mitigate risks and protect your investment.',
           });
         }
       })
@@ -103,9 +121,9 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
             </div>
-            <h3 className="text-2xl font-semibold mb-4">Market Trends</h3>
+            <h3 className="text-2xl font-semibold mb-4">{settings.card1Title}</h3>
             <p className="text-slate-200 leading-relaxed">
-              Understanding legal due diligence is crucial for real estate transactions. Stay updated with the latest market analysis.
+              {settings.card1Description}
             </p>
           </div>
           
@@ -115,9 +133,9 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
               </svg>
             </div>
-            <h3 className="text-2xl font-semibold mb-4">Buying Guides</h3>
+            <h3 className="text-2xl font-semibold mb-4">{settings.card2Title}</h3>
             <p className="text-slate-200 leading-relaxed">
-              Expert advice for first-time buyers and seasoned property investors. Navigate the market with confidence.
+              {settings.card2Description}
             </p>
           </div>
           
@@ -127,9 +145,9 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h3 className="text-2xl font-semibold mb-4">Investment Tips</h3>
+            <h3 className="text-2xl font-semibold mb-4">{settings.card3Title}</h3>
             <p className="text-slate-200 leading-relaxed">
-              Ensure all necessary documents are thoroughly reviewed to mitigate risks and protect your investment.
+              {settings.card3Description}
             </p>
           </div>
         </div>
