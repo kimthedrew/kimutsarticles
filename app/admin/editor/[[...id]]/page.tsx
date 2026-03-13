@@ -23,10 +23,9 @@ export default function EditorPage() {
     commentsEnabled: true,
   });
   const [saving, setSaving] = useState(false);
-  const [quillInstance, setQuillInstance] = useState<any>(null);
   const [importing, setImporting] = useState(false);
 
-  // Image upload handler - use useCallback to prevent recreation
+  // Image upload handler
   const imageHandler = () => {
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
@@ -59,13 +58,20 @@ export default function EditorPage() {
 
         if (res.ok) {
           const data = await res.json();
-          // Access Quill instance from the editor div
-          const editorDiv = quillRef.current?.querySelector('.ql-editor');
-          if (editorDiv && editorDiv.__quill) {
-            const quill = editorDiv.__quill;
+          // Get Quill instance from window or ref
+          let quill = (window as any).__quillInstance;
+          
+          if (!quill && quillRef.current) {
+            const editorElement = quillRef.current.querySelector('.ql-editor');
+            quill = (editorElement as any)?.__quill;
+          }
+          
+          if (quill) {
             const range = quill.getSelection(true) || { index: 0 };
             quill.insertEmbed(range.index, 'image', data.url);
             quill.setSelection(range.index + 1);
+          } else {
+            alert('Editor not ready. Please try again.');
           }
         } else {
           alert('Failed to upload image');
@@ -163,13 +169,28 @@ export default function EditorPage() {
       fetchArticle();
     }
 
+    // Capture Quill instance when editor is ready
+    const timer = setTimeout(() => {
+      const editorElement = quillRef.current?.querySelector('.ql-editor');
+      if (editorElement) {
+        // Store reference to Quill instance
+        const quillInstance = (editorElement as any).__quill;
+        if (quillInstance) {
+          (window as any).__quillInstance = quillInstance;
+        }
+      }
+    }, 500);
+
     const interval = setInterval(() => {
       if (article.title || article.content) {
         autoSave();
       }
     }, 30000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
   }, [articleId]);
 
   const fetchArticle = async () => {
