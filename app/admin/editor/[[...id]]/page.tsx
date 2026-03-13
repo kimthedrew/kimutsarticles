@@ -25,7 +25,7 @@ export default function EditorPage() {
   const [quillInstance, setQuillInstance] = useState<any>(null);
   const [importing, setImporting] = useState(false);
 
-  // Image upload handler
+  // Image upload handler - use useCallback to prevent recreation
   const imageHandler = () => {
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
@@ -58,10 +58,12 @@ export default function EditorPage() {
 
         if (res.ok) {
           const data = await res.json();
-          if (quillInstance) {
-            const range = quillInstance.getSelection(true);
-            quillInstance.insertEmbed(range.index, 'image', data.url);
-            quillInstance.setSelection(range.index + 1);
+          // Get the Quill instance from the window
+          const quill = (window as any).quillEditor;
+          if (quill) {
+            const range = quill.getSelection(true) || { index: 0 };
+            quill.insertEmbed(range.index, 'image', data.url);
+            quill.setSelection(range.index + 1);
           }
         } else {
           alert('Failed to upload image');
@@ -73,7 +75,7 @@ export default function EditorPage() {
     };
   };
 
-  // Quill modules with image handler
+  // Quill modules - memoized without dependencies to prevent re-creation
   const modules = useMemo(() => ({
     toolbar: {
       container: [
@@ -89,7 +91,7 @@ export default function EditorPage() {
         image: imageHandler
       }
     }
-  }), [quillInstance]);
+  }), []); // Empty dependency array to prevent recreation
 
   const formats = [
     'header',
@@ -301,9 +303,8 @@ export default function EditorPage() {
               value={article.content}
               onChange={(content) => setArticle({ ...article, content })}
               onChangeSelection={(selection, source, editor) => {
-                if (!quillInstance) {
-                  setQuillInstance(editor);
-                }
+                // Store Quill instance globally for image handler
+                (window as any).quillEditor = editor;
               }}
               modules={modules}
               formats={formats}
