@@ -131,6 +131,22 @@ export default function ArticlePage() {
             dangerouslySetInnerHTML={{ __html: article.content }}
           />
 
+          {/* Tags Section */}
+          {article.tags && article.tags.length > 0 && (
+            <div className="mb-8 pb-8 border-b">
+              <div className="flex flex-wrap gap-2">
+                {article.tags.map((tag: string, index: number) => (
+                  <span
+                    key={index}
+                    className="inline-block bg-slate-700 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-slate-800 transition cursor-pointer"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
           {article.likesEnabled && (
             <div className="border-t pt-6">
               <button
