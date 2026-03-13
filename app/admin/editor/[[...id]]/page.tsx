@@ -59,15 +59,38 @@ export default function EditorPage() {
 
         if (res.ok) {
           const data = await res.json();
-          // Use the stored quillInstance
-          if (quillInstance) {
-            const range = quillInstance.getSelection();
+          
+          // Try multiple ways to get the Quill instance
+          let quill = quillInstance;
+          
+          if (!quill) {
+            // Try to find it from the DOM
+            const quillContainer = document.querySelector('.ql-container');
+            if (quillContainer && (quillContainer as any).__quill) {
+              quill = (quillContainer as any).__quill;
+            }
+          }
+          
+          if (!quill) {
+            // Try the editor element
+            const editorElement = document.querySelector('.ql-editor');
+            if (editorElement && (editorElement as any).__quill) {
+              quill = (editorElement as any).__quill;
+            }
+          }
+          
+          if (quill) {
+            const range = quill.getSelection();
             if (range) {
-              quillInstance.insertEmbed(range.index, 'image', data.url);
-              quillInstance.setSelection(range.index + 1);
+              quill.insertEmbed(range.index, 'image', data.url);
+              quill.setSelection(range.index + 1);
+            } else {
+              // If no selection, insert at the end
+              const length = quill.getLength();
+              quill.insertEmbed(length - 1, 'image', data.url);
             }
           } else {
-            alert('Editor not ready. Please click in the editor first and try again.');
+            alert('Editor not ready. Please refresh the page and try again.');
           }
         } else {
           alert('Failed to upload image');
@@ -165,17 +188,29 @@ export default function EditorPage() {
       fetchArticle();
     }
 
-    // Capture Quill instance after a short delay to ensure it's initialized
-    const timer = setTimeout(() => {
-      const quillContainer = document.querySelector('.ql-editor');
-      if (quillContainer) {
-        // Find the Quill instance from the container
-        const quillInstance = (quillContainer as any).__quill;
-        if (quillInstance) {
-          setQuillInstance(quillInstance);
-        }
+    // Try to capture Quill instance with multiple attempts
+    let attempts = 0;
+    const captureQuill = () => {
+      attempts++;
+      
+      // Try different selectors
+      let quillContainer = document.querySelector('.ql-container');
+      let quill = (quillContainer as any)?.__quill;
+      
+      if (!quill) {
+        quillContainer = document.querySelector('.ql-editor');
+        quill = (quillContainer as any)?.__quill;
       }
-    }, 100);
+      
+      if (quill && !quillInstance) {
+        setQuillInstance(quill);
+      } else if (attempts < 10) {
+        // Retry up to 10 times
+        setTimeout(captureQuill, 100);
+      }
+    };
+    
+    captureQuill();
 
     const interval = setInterval(() => {
       if (article.title || article.content) {
@@ -183,10 +218,7 @@ export default function EditorPage() {
       }
     }, 30000);
 
-    return () => {
-      clearTimeout(timer);
-      clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, [articleId]);
 
   const fetchArticle = async () => {
