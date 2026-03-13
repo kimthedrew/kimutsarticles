@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css';
@@ -11,6 +11,7 @@ export default function EditorPage() {
   const router = useRouter();
   const params = useParams();
   const articleId = params.id?.[0];
+  const quillRef = useRef<any>(null);
   
   const [article, setArticle] = useState({
     title: '',
@@ -58,9 +59,10 @@ export default function EditorPage() {
 
         if (res.ok) {
           const data = await res.json();
-          // Get the Quill instance from the window
-          const quill = (window as any).quillEditor;
-          if (quill) {
+          // Access Quill instance from the editor div
+          const editorDiv = quillRef.current?.querySelector('.ql-editor');
+          if (editorDiv && editorDiv.__quill) {
+            const quill = editorDiv.__quill;
             const range = quill.getSelection(true) || { index: 0 };
             quill.insertEmbed(range.index, 'image', data.url);
             quill.setSelection(range.index + 1);
@@ -298,18 +300,16 @@ export default function EditorPage() {
 
           <div className="mb-6">
             <label className="block text-gray-700 mb-2 font-semibold">Content</label>
-            <ReactQuill
-              theme="snow"
-              value={article.content}
-              onChange={(content) => setArticle({ ...article, content })}
-              onChangeSelection={(selection, source, editor) => {
-                // Store Quill instance globally for image handler
-                (window as any).quillEditor = editor;
-              }}
-              modules={modules}
-              formats={formats}
-              className="bg-white"
-            />
+            <div ref={quillRef}>
+              <ReactQuill
+                theme="snow"
+                value={article.content}
+                onChange={(content) => setArticle({ ...article, content })}
+                modules={modules}
+                formats={formats}
+                className="bg-white"
+              />
+            </div>
             <p className="text-sm text-gray-500 mt-2">
               Click the image icon in the toolbar to insert images into your article
             </p>
