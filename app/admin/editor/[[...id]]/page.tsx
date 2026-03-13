@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css';
@@ -22,6 +22,82 @@ export default function EditorPage() {
     commentsEnabled: true,
   });
   const [saving, setSaving] = useState(false);
+  const [quillInstance, setQuillInstance] = useState<any>(null);
+
+  // Image upload handler
+  const imageHandler = () => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+
+    input.onchange = async () => {
+      const file = input.files?.[0];
+      if (!file) return;
+
+      // Check file size (5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image size must be less than 5MB');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const token = localStorage.getItem('token');
+
+      try {
+        const res = await fetch('/api/admin/upload-image', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (quillInstance) {
+            const range = quillInstance.getSelection(true);
+            quillInstance.insertEmbed(range.index, 'image', data.url);
+            quillInstance.setSelection(range.index + 1);
+          }
+        } else {
+          alert('Failed to upload image');
+        }
+      } catch (error) {
+        console.error('Upload error:', error);
+        alert('Failed to upload image');
+      }
+    };
+  };
+
+  // Quill modules with image handler
+  const modules = useMemo(() => ({
+    toolbar: {
+      container: [
+        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'align': [] }],
+        ['link', 'image'],
+        ['clean']
+      ],
+      handlers: {
+        image: imageHandler
+      }
+    }
+  }), [quillInstance]);
+
+  const formats = [
+    'header',
+    'bold', 'italic', 'underline', 'strike',
+    'list', 'bullet',
+    'color', 'background',
+    'align',
+    'link', 'image'
+  ];
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -158,8 +234,18 @@ export default function EditorPage() {
               theme="snow"
               value={article.content}
               onChange={(content) => setArticle({ ...article, content })}
+              onChangeSelection={(selection, source, editor) => {
+                if (!quillInstance) {
+                  setQuillInstance(editor);
+                }
+              }}
+              modules={modules}
+              formats={formats}
               className="bg-white"
             />
+            <p className="text-sm text-gray-500 mt-2">
+              Click the image icon in the toolbar to insert images into your article
+            </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 mb-6">
