@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { format } from 'date-fns';
 
 export default function ArticlesPage() {
-  const [articles, setArticles] = useState([]);
+  const [articles, setArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
 
