@@ -7,6 +7,9 @@ import bcrypt from 'bcryptjs';
 export async function POST(request: NextRequest) {
   try {
     const token = getTokenFromRequest(request);
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     const payload = verifyToken(token);
     
     if (!payload || typeof payload === 'string') {
