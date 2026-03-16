@@ -87,9 +87,42 @@ export async function POST(request: NextRequest) {
       // Remove title from content
       content = html.replace(/<h1[^>]*>.*?<\/h1>/i, '').trim();
 
+    } else if (fileExtension === 'rtf') {
+      // Rich Text Format
+      const rtfText = await file.text();
+
+      if (!rtfText.trimStart().startsWith('{\\rtf')) {
+        return NextResponse.json({ error: 'Invalid RTF file.' }, { status: 400 });
+      }
+
+      // Strip RTF control codes to plain text
+      const plainText = rtfText
+        .replace(/\{\\[*][^}]*\}/g, '')           // remove destination groups
+        .replace(/\\bin\d+\s?/g, '')               // remove binary blobs
+        .replace(/\\'([0-9a-fA-F]{2})/g, (_, h) => String.fromCharCode(parseInt(h, 16))) // hex escapes
+        .replace(/\\u(-?\d+)\??/g, (_, n) => {    // unicode escapes
+          const code = parseInt(n);
+          return String.fromCharCode(code < 0 ? code + 65536 : code);
+        })
+        .replace(/\\par[d]?\b\s?/g, '\n')          // paragraph breaks
+        .replace(/\\line\b\s?/g, '\n')             // line breaks
+        .replace(/\\tab\b\s?/g, '\t')              // tabs
+        .replace(/\\[a-zA-Z-]+[-]?\d*\s?/g, '')   // remaining control words
+        .replace(/[{}]/g, '')                       // braces
+        .trim();
+
+      const lines = plainText.split('\n').map(l => l.trim()).filter(Boolean);
+      title = lines[0] || file.name.replace(/\.[^/.]+$/, '');
+      content = lines.slice(1).map(line => `<p>${line}</p>`).join('\n');
+
+    } else if (fileExtension === 'doc') {
+      return NextResponse.json({
+        error: 'The old .doc format is not supported. Please open the file in Word and save it as .docx (File → Save As → Word Document), then import again.',
+      }, { status: 400 });
+
     } else {
-      return NextResponse.json({ 
-        error: 'Unsupported file format. Please use .txt, .html, .md, or .docx' 
+      return NextResponse.json({
+        error: 'Unsupported file format. Supported formats: .txt, .html, .md, .docx, .rtf'
       }, { status: 400 });
     }
 

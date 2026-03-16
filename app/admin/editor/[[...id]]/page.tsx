@@ -133,7 +133,7 @@ export default function EditorPage() {
   const handleImportFile = () => {
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
-    input.setAttribute('accept', '.txt,.html,.htm,.md,.markdown,.docx');
+    input.setAttribute('accept', '.txt,.html,.htm,.md,.markdown,.docx,.doc,.rtf');
     input.click();
 
     input.onchange = async () => {
@@ -321,7 +321,7 @@ export default function EditorPage() {
               {importing ? 'Importing...' : 'Import from File'}
             </button>
             <p className="text-sm text-gray-500 mt-2">
-              Import an existing article from .txt, .html, .md, or .docx file
+              Import an existing article from .txt, .html, .md, .docx, or .rtf file
             </p>
           </div>
 
