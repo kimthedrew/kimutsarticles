@@ -139,7 +139,7 @@ export default function ArticlesPage() {
       <footer className="bg-white/80 border-t border-amber-100 mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center">
-            <p className="text-slate-600 mb-2">© 2024 Real Estate Insights. All rights reserved.</p>
+            <p className="text-slate-600 mb-2">© 2026 Real Estate Insights. All rights reserved.</p>
             <p className="text-slate-500 text-sm">Educational insights for aspiring real estate investors</p>
           </div>
         </div>
